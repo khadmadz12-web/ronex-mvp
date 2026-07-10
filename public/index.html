@@ -31,7 +31,7 @@
         .hidden { display: none !important; }
         .glass-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); }
 
-        /* --- 1. AUTH / LOGIN INTERFACE --- */
+        /* --- AUTH / LOGIN INTERFACE --- */
         .auth-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent); }
         .auth-card { width: 100%; max-width: 420px; text-align: center; }
         .auth-logo { font-size: 2rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; background: var(--brand-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
@@ -43,7 +43,7 @@
         .btn-submit { width: 100%; padding: 14px; background: var(--brand-gradient); border: none; color: white; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: transform 0.1s, opacity 0.2s; }
         .btn-submit:hover { opacity: 0.95; transform: translateY(-1px); }
 
-        /* --- 2. MAIN APP LAYOUT --- */
+        /* --- MAIN APP LAYOUT --- */
         .app-layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
         @media (max-width: 1024px) { .app-layout { grid-template-columns: 1fr; } .sidebar { display: none; } }
 
@@ -63,7 +63,7 @@
         .view-title h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
         .view-title p { color: var(--text-muted); font-size: 0.9rem; }
 
-        /* --- 3. DASHBOARD VIEW --- */
+        /* --- DASHBOARD VIEW --- */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 32px; }
         .stat-card { display: flex; align-items: center; gap: 20px; }
         .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
@@ -73,11 +73,11 @@
         .stat-info h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-info p { font-size: 1.75rem; font-weight: 700; margin-top: 4px; }
 
-        /* Dashboard Dual Grid Split */
+        /* Dashboard Split Layout */
         .dashboard-split { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
         @media (max-width: 1200px) { .dashboard-split { grid-template-columns: 1fr; } }
 
-        /* Table & Lists Styles */
+        /* Tables & Lists */
         .table-card h2, .surplus-card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
         .table-responsive { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
@@ -90,14 +90,14 @@
         .status-tag.stable { background: var(--success-glow); color: var(--success); }
         .status-tag.danger { background: var(--danger-glow); color: var(--danger); }
 
-        /* Actions Cell Styling */
+        /* Actions Cell Buttons */
         .actions-cell { display: flex; gap: 8px; }
         .btn-icon-edit { padding: 6px 10px; background: rgba(99, 102, 241, 0.15); border: none; color: #818cf8; border-radius: 6px; cursor: pointer; transition: 0.2s; }
         .btn-icon-edit:hover { background: var(--brand-primary); color: white; }
         .btn-icon-delete { padding: 6px 10px; background: var(--danger-glow); border: none; color: var(--danger); border-radius: 6px; cursor: pointer; transition: 0.2s; }
         .btn-icon-delete:hover { background: var(--danger); color: white; }
 
-        /* Surplus mini-list side section */
+        /* Surplus Mini-list */
         .surplus-list { display: flex; flex-direction: column; gap: 12px; }
         .surplus-item { background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; transition: 0.2s; }
         .surplus-item:hover { border-color: var(--brand-primary); }
@@ -105,7 +105,7 @@
         .btn-action-sm { width: 100%; padding: 8px; background: transparent; border: 1px solid var(--brand-primary); color: var(--brand-primary); border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .btn-action-sm:hover { background: var(--brand-primary); color: white; }
 
-        /* --- 4. FORMULAIRES VIEW --- */
+        /* FORMULAIRES VIEW */
         .form-max-width { max-width: 650px; margin: 0 auto; }
         .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .btn-header-add { padding: 10px 18px; background: var(--brand-gradient); border: none; color: white; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
@@ -113,6 +113,7 @@
 </head>
 <body>
 
+    <!-- Ecran de Connexion -->
     <div id="view-login" class="auth-wrapper">
         <div class="glass-card auth-card">
             <div class="auth-logo"><i class="fa-solid fa-flask-vial"></i> RONEX</div>
@@ -131,6 +132,7 @@
         </div>
     </div>
 
+    <!-- Application Principale -->
     <div id="app-container" class="app-layout hidden">
         
         <aside class="sidebar">
@@ -152,6 +154,7 @@
 
         <main class="main-content">
             
+            <!-- Vue Dashboard -->
             <div id="view-dashboard">
                 <div class="view-header">
                     <div class="view-title">
@@ -203,6 +206,7 @@
                 </div>
             </div>
 
+            <!-- Vue Ajouter / Modifier Formulaire -->
             <div id="view-ajouter" class="hidden">
                 <div class="view-header">
                     <div class="view-title">
@@ -246,9 +250,11 @@
         </main>
     </div>
 
+    <!-- Script de traitement logique Front-end -->
     <script>
         const API_BASE_URL = 'https://ronex-backend-x717.onrender.com';
         let activeLocalStateCache = [];
+        let globalAlertTriggered = false; // Pour ne déclencher l'alerte d'accueil qu'une seule fois
 
         function switchView(viewName) {
             document.getElementById('view-dashboard').classList.add('hidden');
@@ -274,6 +280,7 @@
             switchView('ajouter');
         }
 
+        // Alerte Toast Moderne de Connexion réussie
         document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
             document.getElementById('view-login').classList.add('hidden');
@@ -298,10 +305,26 @@
         async function loadDashboard() {
             try {
                 const statsRes = await fetch(`${API_BASE_URL}/api/stats`);
+                if (!statsRes.ok) throw new Error("Erreur de réponse serveur");
                 const stats = await statsRes.json();
+                
                 document.getElementById('total-stock').innerText = stats.total;
                 document.getElementById('critique-stock').innerText = stats.critique;
                 document.getElementById('peremption-stock').innerText = stats.peremption;
+
+                // Nouvelle Alerte automatique d'accueil pour la péremption ou seuils critiques
+                if ((stats.critique > 0 || stats.peremption > 0) && !globalAlertTriggered) {
+                    globalAlertTriggered = true;
+                    Swal.fire({
+                        title: 'Attention : Rapports Critiques !',
+                        html: `Votre laboratoire contient actuellement <b style="color:var(--danger)">${stats.critique}</b> produit(s) en sous-stock et <b style="color:var(--warning)">${stats.peremption}</b> lot(s) proche(s) ou ayant dépassé la date de péremption.`,
+                        icon: 'warning',
+                        confirmButtonText: 'Inspecter l\'inventaire',
+                        confirmButtonColor: '#6366f1',
+                        background: '#1e293b',
+                        color: '#fff'
+                    });
+                }
 
                 const listRes = await fetch(`${API_BASE_URL}/api/reactifs`);
                 activeLocalStateCache = await listRes.json();
@@ -347,7 +370,7 @@
                                 <span><i class="fa-solid fa-building-shield"></i> Labo: <b>${r.labo}</b></span><br>
                                 <span style="color: var(--warning)"><i class="fa-solid fa-hourglass-end"></i> Expire: ${r.peremption}</span>
                             </div>
-                            <button class="btn-action-sm" onclick="initierContact('${r.labo}', '${r.nom}')"><i class="fa-regular fa-paper-plane"></i> Réclamer / Contact</button>
+                            <button class="btn-action-sm" onclick="initierContact('${r.labo}', '${r.nom}', ${r.quantite})"><i class="fa-regular fa-paper-plane"></i> Réclamer / Contact</button>
                         `;
                         surplusContainer.appendChild(card);
                     }
@@ -358,6 +381,15 @@
                 }
             } catch (err) {
                 console.error("Dashboard Sync Error:", err);
+                // Nouvelle Alerte d'échec de communication réseau (Render hors-ligne ou lent)
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Échec de synchronisation',
+                    text: 'Impossible de joindre le serveur Ronex. La plateforme tourne en mode local déconnecté.',
+                    confirmButtonColor: '#ef4444',
+                    background: '#1e293b',
+                    color: '#fff'
+                });
             }
         }
 
@@ -378,6 +410,7 @@
             switchView('ajouter');
         }
 
+        // Pop-up d'Alerte de Confirmation de Suppression
         async function triggerDeleteAction(id) {
             Swal.fire({
                 title: 'Êtes-vous sûr ?',
@@ -418,6 +451,7 @@
             });
         }
 
+        // Formulaire d'Enregistrement (Ajout ou Modification réussie)
         document.getElementById('reactif-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const editId = document.getElementById('edit-id').value;
@@ -471,27 +505,42 @@
             }
         });
 
-        function initierContact(labo, item) {
+        // NOUVEAU : Pop-up intelligente avec Saisie de texte (Input) pour la réclamation Inter-Labo
+        function initierContact(labo, item, stockDisponible) {
             Swal.fire({
-                title: 'Demande de Contact',
-                text: `Voulez-vous envoyer une demande de réclamation à [${labo}] pour le produit [${item}] ?`,
-                icon: 'question',
+                title: 'Quantité à réclamer',
+                text: `Demande de transfert depuis [${labo}] pour le produit [${item}].`,
+                input: 'number',
+                inputLabel: `Combien d'unités demandez-vous ? (Maximum disponible : ${stockDisponible})`,
+                inputPlaceholder: 'Ex: 5',
                 showCancelButton: true,
+                confirmButtonText: 'Transmettre la demande',
+                cancelButtonText: 'Annuler',
                 confirmButtonColor: '#6366f1',
                 cancelButtonColor: '#334155',
-                confirmButtonText: 'Envoyer la demande',
-                cancelButtonText: 'Annuler',
                 background: '#1e293b',
-                color: '#fff'
+                color: '#fff',
+                inputAttributes: {
+                    min: '1',
+                    step: '1'
+                },
+                inputValidator: (value) => {
+                    if (!value || isNaN(value) || value <= 0) {
+                        return 'Veuillez entrer un nombre valide supérieur à 0 !';
+                    }
+                    if (Number(value) > Number(stockDisponible)) {
+                        return `Alerte : La quantité saisie dépasse le stock réel disponible (${stockDisponible} pcs) !`;
+                    }
+                }
             }).then((result) => {
-                if (result.isConfirmed) {
+                if (result.isConfirmed && result.value) {
                     Swal.fire({
-                        title: 'Envoyé !',
-                        text: 'Votre message de contact a été transmis avec succès.',
+                        title: 'Demande Envoyée !',
+                        text: `Votre bon de transfert électronique pour ${result.value} unité(s) de [${item}] a été notifié au ${labo}.`,
                         icon: 'success',
                         background: '#1e293b',
                         color: '#fff',
-                        confirmButtonColor: '#6366f1'
+                        confirmButtonColor: '#10b981'
                     });
                 }
             });
