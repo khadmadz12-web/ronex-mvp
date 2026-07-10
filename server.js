@@ -1,11 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const cors = require('cors'); // <-- Zdna dynamic package d CORS hna
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Express Middleware
+app.use(cors()); // <-- Khllina dynamic server i-supporti ayya link b7al Netlify direct!
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -24,7 +26,6 @@ let nextId = 5;
 app.get('/api/stats', (req, res) => {
   try {
     const stockCritique = mockReactifs.filter(r => Number(r.quantite) <= Number(r.seuil)).length;
-    // Filtrage 3la 7sab dynamic date line
     const prochePeremption = mockReactifs.filter(r => new Date(r.peremption) < new Date('2026-11-01')).length;
     
     res.json({
@@ -94,5 +95,5 @@ app.delete('/api/reactifs/:id', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Ronex MVP running on http://localhost:${PORT}`);
+  console.log(`🚀 Ronex MVP running on port ${PORT}`);
 });
