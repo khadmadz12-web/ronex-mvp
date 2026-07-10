@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ronex Platform — Advanced Laboratory Lab MVP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SweetAlert2 pour les alertes modernes -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
@@ -22,6 +21,7 @@
             --success: #10b981;
             --success-glow: rgba(16, 185, 129, 0.15);
             --warning: #f59e0b;
+            --warning-glow: rgba(245, 158, 11, 0.15);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
@@ -63,15 +63,13 @@
         .view-title h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
         .view-title p { color: var(--text-muted); font-size: 0.9rem; }
 
-        /* --- DASHBOARD VIEW --- */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 32px; }
-        .stat-card { display: flex; align-items: center; gap: 20px; }
-        .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
-        .stat-icon.total { background: rgba(99, 102, 241, 0.1); color: var(--brand-primary); }
-        .stat-icon.critique { background: var(--danger-glow); color: var(--danger); }
-        .stat-icon.peremption { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .stat-info h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .stat-info p { font-size: 1.75rem; font-weight: 700; margin-top: 4px; }
+        /* --- NOUVELLE ZONE DU CENTRE D'ALERTES --- */
+        .alerts-hub-zone { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; padding: 18px; border-left: 4px solid var(--brand-primary); background: #131e35; border-radius: 8px; }
+        .alerts-hub-title { font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #a5b4fc; display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .alert-row-item { padding: 10px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 10px; }
+        .alert-row-item.danger-type { background: var(--danger-glow); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .alert-row-item.warning-type { background: var(--warning-glow); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.2); }
+        .alert-row-item.success-type { background: var(--success-glow); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.2); }
 
         /* Dashboard Split Layout */
         .dashboard-split { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
@@ -113,7 +111,6 @@
 </head>
 <body>
 
-    <!-- Ecran de Connexion -->
     <div id="view-login" class="auth-wrapper">
         <div class="glass-card auth-card">
             <div class="auth-logo"><i class="fa-solid fa-flask-vial"></i> RONEX</div>
@@ -132,7 +129,6 @@
         </div>
     </div>
 
-    <!-- Application Principale -->
     <div id="app-container" class="app-layout hidden">
         
         <aside class="sidebar">
@@ -154,7 +150,6 @@
 
         <main class="main-content">
             
-            <!-- Vue Dashboard -->
             <div id="view-dashboard">
                 <div class="view-header">
                     <div class="view-title">
@@ -178,6 +173,12 @@
                         <div class="stat-info"><h3>Péremption Proche</h3><p id="peremption-stock">0</p></div>
                     </div>
                 </section>
+
+                <div class="glass-card alerts-hub-zone">
+                    <div class="alerts-hub-title"><i class="fa-solid fa-bell-on"></i> Centre d'Alertes en Temps Réel</div>
+                    <div id="alerts-hub-list-container">
+                        </div>
+                </div>
 
                 <div class="dashboard-split">
                     <div class="glass-card table-card">
@@ -206,7 +207,6 @@
                 </div>
             </div>
 
-            <!-- Vue Ajouter / Modifier Formulaire -->
             <div id="view-ajouter" class="hidden">
                 <div class="view-header">
                     <div class="view-title">
@@ -250,11 +250,10 @@
         </main>
     </div>
 
-    <!-- Script de traitement logique Front-end -->
     <script>
         const API_BASE_URL = 'https://ronex-backend-x717.onrender.com';
         let activeLocalStateCache = [];
-        let globalAlertTriggered = false; // Pour ne déclencher l'alerte d'accueil qu'une seule fois
+        let globalAlertTriggered = false;
 
         function switchView(viewName) {
             document.getElementById('view-dashboard').classList.add('hidden');
@@ -280,7 +279,6 @@
             switchView('ajouter');
         }
 
-        // Alerte Toast Moderne de Connexion réussie
         document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
             document.getElementById('view-login').classList.add('hidden');
@@ -305,19 +303,18 @@
         async function loadDashboard() {
             try {
                 const statsRes = await fetch(`${API_BASE_URL}/api/stats`);
-                if (!statsRes.ok) throw new Error("Erreur de réponse serveur");
+                if (!statsRes.ok) throw new Error("Erreur serveur");
                 const stats = await statsRes.json();
                 
                 document.getElementById('total-stock').innerText = stats.total;
                 document.getElementById('critique-stock').innerText = stats.critique;
                 document.getElementById('peremption-stock').innerText = stats.peremption;
 
-                // Nouvelle Alerte automatique d'accueil pour la péremption ou seuils critiques
                 if ((stats.critique > 0 || stats.peremption > 0) && !globalAlertTriggered) {
                     globalAlertTriggered = true;
                     Swal.fire({
                         title: 'Attention : Rapports Critiques !',
-                        html: `Votre laboratoire contient actuellement <b style="color:var(--danger)">${stats.critique}</b> produit(s) en sous-stock et <b style="color:var(--warning)">${stats.peremption}</b> lot(s) proche(s) ou ayant dépassé la date de péremption.`,
+                        html: `Votre laboratoire contient actuellement <b style="color:var(--danger)">${stats.critique}</b> produit(s) en sous-stock.`,
                         icon: 'warning',
                         confirmButtonText: 'Inspecter l\'inventaire',
                         confirmButtonColor: '#6366f1',
@@ -331,24 +328,48 @@
                 
                 const tbody = document.querySelector('#reactifs-table tbody');
                 const surplusContainer = document.getElementById('surplus-container');
+                const hubContainer = document.getElementById('alerts-hub-list-container');
                 
                 tbody.innerHTML = '';
                 surplusContainer.innerHTML = '';
+                hubContainer.innerHTML = ''; // Clear la zone des alertes
+                
                 let hasSurplus = false;
+                let alertMessagesHtml = [];
 
+                // Traitement dynamique pour remplir le Tableau et la nouvelle Khana d'Alertes
                 activeLocalStateCache.forEach(r => {
                     if (r.labo === "Labo Central") {
                         const isCritique = Number(r.quantite) <= Number(r.seuil);
+                        
+                        // Détection de péremption par rapport à l'année courante 2026
+                        const isPerime = new Date(r.peremption) < new Date('2026-07-10');
+
+                        // Injection automatique dans le centre d'alertes si problème détecté
+                        if (isPerime) {
+                            alertMessagesHtml.push(`
+                                <div class="alert-row-item danger-type">
+                                    <i class="fa-solid fa-radiation"></i> <b>DANGER PÉREMPTION :</b> Le lot du réactif [${r.nom}] a expiré le ${r.peremption} ! Action de retrait requise.
+                                </div>
+                            `);
+                        } else if (isCritique) {
+                            alertMessagesHtml.push(`
+                                <div class="alert-row-item warning-type">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> <b>ALERTE STOCK :</b> Le produit [${r.nom}] est en sous-stock (${r.quantite} restant pour un seuil critique de ${r.seuil}).
+                                </div>
+                            `);
+                        }
+
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td><strong style="color:#fff">${r.nom}</strong></td>
                             <td><span class="badge-lot">${r.code}</span></td>
                             <td><strong>${r.quantite}</strong> units</td>
-                            <td><span style="color:${isCritique ? 'var(--danger)': 'var(--text-muted)'}">${r.peremption}</span></td>
+                            <td><span style="color:${isPerime || isCritique ? 'var(--danger)': 'var(--text-muted)'}">${r.peremption}</span></td>
                             <td>
-                                <span class="status-tag ${isCritique ? 'danger' : 'stable'}">
-                                    <i class="fa-solid ${isCritique ? 'fa-circle-exclamation' : 'fa-circle-check'}"></i>
-                                    ${isCritique ? 'Alerte' : 'Stable'}
+                                <span class="status-tag ${isCritique || isPerime ? 'danger' : 'stable'}">
+                                    <i class="fa-solid ${isCritique || isPerime ? 'fa-circle-exclamation' : 'fa-circle-check'}"></i>
+                                    ${isPerime ? 'Périmé' : (isCritique ? 'Alerte' : 'Stable')}
                                 </span>
                             </td>
                             <td>
@@ -376,16 +397,26 @@
                     }
                 });
 
+                // Remplissage de la Khana d'alertes
+                if (alertMessagesHtml.length > 0) {
+                    hubContainer.innerHTML = alertMessagesHtml.join('');
+                } else {
+                    hubContainer.innerHTML = `
+                        <div class="alert-row-item success-type">
+                            <i class="fa-solid fa-circle-check"></i> État du stock optimal. Aucune anomalie détectée sur les réactifs du Labo Central.
+                        </div>
+                    `;
+                }
+
                 if(!hasSurplus) {
                     surplusContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem; text-align:center; padding: 20px 0;">Aucun surplus publié.</p>`;
                 }
             } catch (err) {
                 console.error("Dashboard Sync Error:", err);
-                // Nouvelle Alerte d'échec de communication réseau (Render hors-ligne ou lent)
                 Swal.fire({
                     icon: 'error',
                     title: 'Échec de synchronisation',
-                    text: 'Impossible de joindre le serveur Ronex. La plateforme tourne en mode local déconnecté.',
+                    text: 'Impossible de joindre le serveur Ronex.',
                     confirmButtonColor: '#ef4444',
                     background: '#1e293b',
                     color: '#fff'
@@ -410,7 +441,6 @@
             switchView('ajouter');
         }
 
-        // Pop-up d'Alerte de Confirmation de Suppression
         async function triggerDeleteAction(id) {
             Swal.fire({
                 title: 'Êtes-vous sûr ?',
@@ -427,7 +457,6 @@
                 if (result.isConfirmed) {
                     try {
                         await fetch(`${API_BASE_URL}/api/reactifs/${id}`, { method: 'DELETE' });
-                        
                         Swal.fire({
                             title: 'Supprimé !',
                             text: 'Le réactif a été retiré avec succès.',
@@ -436,7 +465,6 @@
                             color: '#fff',
                             confirmButtonColor: '#6366f1'
                         });
-                        
                         loadDashboard();
                     } catch (error) {
                         Swal.fire({
@@ -451,7 +479,6 @@
             });
         }
 
-        // Formulaire d'Enregistrement (Ajout ou Modification réussie)
         document.getElementById('reactif-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const editId = document.getElementById('edit-id').value;
@@ -505,7 +532,6 @@
             }
         });
 
-        // NOUVEAU : Pop-up intelligente avec Saisie de texte (Input) pour la réclamation Inter-Labo
         function initierContact(labo, item, stockDisponible) {
             Swal.fire({
                 title: 'Quantité à réclamer',
@@ -520,10 +546,7 @@
                 cancelButtonColor: '#334155',
                 background: '#1e293b',
                 color: '#fff',
-                inputAttributes: {
-                    min: '1',
-                    step: '1'
-                },
+                inputAttributes: { min: '1', step: '1' },
                 inputValidator: (value) => {
                     if (!value || isNaN(value) || value <= 0) {
                         return 'Veuillez entrer un nombre valide supérieur à 0 !';
