@@ -247,6 +247,7 @@
     </div>
 
     <script>
+        const API_BASE_URL = 'https://ronex-backend-x717.onrender.com';
         let activeLocalStateCache = [];
 
         function switchView(viewName) {
@@ -278,7 +279,6 @@
             document.getElementById('view-login').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
             
-            // Notification de bienvenue moderne
             Swal.fire({
                 toast: true,
                 position: 'top-end',
@@ -297,13 +297,13 @@
 
         async function loadDashboard() {
             try {
-                const statsRes = await fetch('/api/stats');
+                const statsRes = await fetch(`${API_BASE_URL}/api/stats`);
                 const stats = await statsRes.json();
                 document.getElementById('total-stock').innerText = stats.total;
                 document.getElementById('critique-stock').innerText = stats.critique;
                 document.getElementById('peremption-stock').innerText = stats.peremption;
 
-                const listRes = await fetch('/api/reactifs');
+                const listRes = await fetch(`${API_BASE_URL}/api/reactifs`);
                 activeLocalStateCache = await listRes.json();
                 
                 const tbody = document.querySelector('#reactifs-table tbody');
@@ -379,7 +379,6 @@
         }
 
         async function triggerDeleteAction(id) {
-            // Alerte de confirmation moderne avec SweetAlert2
             Swal.fire({
                 title: 'Êtes-vous sûr ?',
                 text: "Ce réactif sera définitivement supprimé de l'inventaire !",
@@ -394,7 +393,7 @@
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        await fetch(`/api/reactifs/${id}`, { method: 'DELETE' }).catch(e => console.log("Simulated routing"));
+                        await fetch(`${API_BASE_URL}/api/reactifs/${id}`, { method: 'DELETE' });
                         
                         Swal.fire({
                             title: 'Supprimé !',
@@ -432,12 +431,12 @@
                 labo: "Labo Central"
             };
 
-            let url = '/api/reactifs';
+            let url = `${API_BASE_URL}/api/reactifs`;
             let method = 'POST';
             let successMessage = "Le nouveau réactif a été ajouté à l'inventaire.";
 
             if (editId) {
-                url = `/api/reactifs/${editId}`;
+                url = `${API_BASE_URL}/api/reactifs/${editId}`;
                 method = 'PUT';
                 successMessage = "Les modifications ont été enregistrées avec succès.";
             }
