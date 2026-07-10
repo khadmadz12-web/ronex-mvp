@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ronex Platform — Advanced Laboratory Lab MVP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 pour les alertes modernes -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --brand-primary: #6366f1;
@@ -275,6 +277,21 @@
             e.preventDefault();
             document.getElementById('view-login').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
+            
+            // Notification de bienvenue moderne
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Connexion réussie',
+                text: 'Bienvenue sur la plateforme Ronex',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                background: '#1e293b',
+                color: '#fff'
+            });
+
             loadDashboard();
         });
 
@@ -362,11 +379,44 @@
         }
 
         async function triggerDeleteAction(id) {
-            if (confirm("Êtes-vous sûr de vouloir supprimer définitivement ce réactif de l'inventaire ?")) {
-                alert(`[Ronex Audit]: Demande de suppression envoyée pour l'ID: ${id}`);
-                await fetch(`/api/reactifs/${id}`, { method: 'DELETE' }).catch(e => console.log("Simulated routing"));
-                loadDashboard();
-            }
+            // Alerte de confirmation moderne avec SweetAlert2
+            Swal.fire({
+                title: 'Êtes-vous sûr ?',
+                text: "Ce réactif sera définitivement supprimé de l'inventaire !",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#334155',
+                confirmButtonText: 'Oui, supprimer',
+                cancelButtonText: 'Annuler',
+                background: '#1e293b',
+                color: '#fff'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        await fetch(`/api/reactifs/${id}`, { method: 'DELETE' }).catch(e => console.log("Simulated routing"));
+                        
+                        Swal.fire({
+                            title: 'Supprimé !',
+                            text: 'Le réactif a été retiré avec succès.',
+                            icon: 'success',
+                            background: '#1e293b',
+                            color: '#fff',
+                            confirmButtonColor: '#6366f1'
+                        });
+                        
+                        loadDashboard();
+                    } catch (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erreur',
+                            text: 'Impossible de supprimer le produit.',
+                            background: '#1e293b',
+                            color: '#fff'
+                        });
+                    }
+                }
+            });
         }
 
         document.getElementById('reactif-form').addEventListener('submit', async (e) => {
@@ -384,25 +434,68 @@
 
             let url = '/api/reactifs';
             let method = 'POST';
+            let successMessage = "Le nouveau réactif a été ajouté à l'inventaire.";
 
             if (editId) {
                 url = `/api/reactifs/${editId}`;
                 method = 'PUT';
+                successMessage = "Les modifications ont été enregistrées avec succès.";
             }
 
-            await fetch(url, {
-                method: method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
+            try {
+                await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
 
-            document.getElementById('reactif-form').reset();
-            document.getElementById('edit-id').value = "";
-            switchView('dashboard');
+                Swal.fire({
+                    title: 'Enregistré !',
+                    text: successMessage,
+                    icon: 'success',
+                    background: '#1e293b',
+                    color: '#fff',
+                    confirmButtonColor: '#6366f1'
+                });
+
+                document.getElementById('reactif-form').reset();
+                document.getElementById('edit-id').value = "";
+                switchView('dashboard');
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erreur',
+                    text: "Un problème est survenu lors de l'enregistrement.",
+                    background: '#1e293b',
+                    color: '#fff'
+                });
+            }
         });
 
         function initierContact(labo, item) {
-            alert(`[Audit Log]: Demande de contact envoyée vers [${labo}] pour le produit [${item}].`);
+            Swal.fire({
+                title: 'Demande de Contact',
+                text: `Voulez-vous envoyer une demande de réclamation à [${labo}] pour le produit [${item}] ?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#6366f1',
+                cancelButtonColor: '#334155',
+                confirmButtonText: 'Envoyer la demande',
+                cancelButtonText: 'Annuler',
+                background: '#1e293b',
+                color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Envoyé !',
+                        text: 'Votre message de contact a été transmis avec succès.',
+                        icon: 'success',
+                        background: '#1e293b',
+                        color: '#fff',
+                        confirmButtonColor: '#6366f1'
+                    });
+                }
+            });
         }
     </script>
 </body>
